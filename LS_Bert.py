@@ -14,11 +14,7 @@ import math
 import sys
 import re
 
-from src.transformers import BertModel, BertForMaskedLM, BertTokenizer
-
 from sklearn.metrics.pairwise import cosine_similarity as cosine
-
-
 
 # OPTIONAL: if you want to have more information on what's happening, activate the logger as follows
 import numpy as np
@@ -33,11 +29,10 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
-from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
 
-from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
-
-from src.transformers import SentencePieceTokenizer
+from src.transformers import BertModel, BertForMaskedLM, BertTokenizer, SentencePieceTokenizer
+from src.transformers.optimization import get_linear_schedule_with_warmup
+from src.transformers.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
 
 
 import logging
