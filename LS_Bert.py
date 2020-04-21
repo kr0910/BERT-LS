@@ -14,8 +14,7 @@ import math
 import sys
 import re
 
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.modeling import BertModel, BertForMaskedLM
+from src.transformers import BertModel, BertForMaskedLM, BertTokenizer
 
 from sklearn.metrics.pairwise import cosine_similarity as cosine
 
@@ -37,6 +36,9 @@ from tqdm import tqdm, trange
 from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
 
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
+
+from src.transformers import SentencePieceTokenizer
+
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -756,6 +758,8 @@ def main():
                              "Positive power of 2: static loss scaling value.\n")
     parser.add_argument('--server_ip', type=str, default='', help="Can be used for distant debugging.")
     parser.add_argument('--server_port', type=str, default='', help="Can be used for distant debugging.")
+
+    parser.add_argument("--ja", action='store_true', help="Japanese file, use sentence piece")
     args = parser.parse_args()
 
 
@@ -794,8 +798,12 @@ def main():
     if  not args.do_eval:
         raise ValueError("At least `do_eval` must be True.")
 
-    tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
-
+    if args.ja:
+        tokenizer = SentencePieceTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
+    else:
+        ## leveraging lastest bert module in Transformers to load pre-trained model tokenizer
+        tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
+    
     train_examples = None
     num_train_optimization_steps = None
     
